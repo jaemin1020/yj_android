@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.member.service.impl.MemberMapper">
+	
+
+	<resultMap id="member" type="egovframework.member.service.MemberVO">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="tel" column="tel" />
+	</resultMap>
+	
+	<insert id="insertMember">
+		<![CDATA[
+			INSERT INTO member 
+				(
+				   name
+				  , tel )
+			VALUES ( 
+				   #{name}
+				  , #{tel} )
+		]]>
+	</insert>
+	
+	<update id="updateMember">
+		<![CDATA[
+			UPDATE member
+			SET name=#{name}
+				, tel=#{tel} where id=#{id}
+			]]>
+	</update>
+	
+	<delete id="deleteMember">
+		<![CDATA[
+			DELETE FROM member where id=#{id}
+			]]>
+	</delete>
+	
+	<select id="selectMember" resultMap="member">
+		<![CDATA[
+			SELECT
+				id
+				, name
+				, tel
+			FROM member where id=#{id}
+			]]>
+	</select>
+	
+	<select id="loginMemberCheck" resultMap="member">
+		<![CDATA[
+			SELECT
+				id
+				, name
+				, tel
+			FROM member where name=#{name} and tel=#{tel}
+			]]>
+	</select>
+	
+	<select id="selectMemberList" parameterType="egovframework.member.service.MemberVO" resultType="egovMap">
+			SELECT
+								id
+								, name
+								, tel
+					FROM member
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 0">AND
+					id = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1">AND
+					name LIKE CONCAT('%',#{searchKeyword},'%')
+				</if>
+			</if>
+				ORDER BY name
+				limit #{recordCountPerPage} offset #{firstIndex}	
+	</select>	
+	<select id="selectMemberListTotCnt" parameterType="egovframework.member.service.MemberVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM member
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 0">AND
+					id = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1">AND
+					name LIKE CONCAT('%',#{searchKeyword},'%')
+				</if>
+			</if>			
+	</select>
+
+</mapper>

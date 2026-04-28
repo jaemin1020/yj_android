@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.notice.service.impl.NoticeMapper">
+	
+
+	<resultMap id="notice" type="egovframework.notice.service.NoticeVO">
+		<result property="name" column="name" />
+		<result property="number" column="number" />
+	</resultMap>
+	
+	<insert id="insertNotice">
+		<![CDATA[
+			INSERT INTO notice 
+				( name
+				  , number )
+			VALUES ( #{name}
+				  , #{number} )
+		]]>
+	</insert>
+	
+	<update id="updateNotice">
+		<![CDATA[
+			UPDATE notice
+			SET name=#{name}
+				, number=#{number} where name=#{name}
+			]]>
+	</update>
+	
+	<delete id="deleteNotice">
+		<![CDATA[
+			DELETE FROM notice where name=#{name}
+			]]>
+	</delete>
+	
+	<select id="selectNotice" resultMap="notice">
+		<![CDATA[
+			SELECT
+				name
+				, number
+			FROM notice where name=#{name}
+			]]>
+	</select>
+	
+	<select id="selectNoticeList" parameterType="egovframework.notice.service.NoticeVO" resultType="egovMap">
+			SELECT
+								name
+								, number
+					FROM notice
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 0">AND
+					name = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1">AND
+					number LIKE CONCAT('%',#{searchKeyword},'%')
+				</if>
+			</if>
+			 	ORDER BY name
+				limit #{recordCountPerPage} offset #{firstIndex}
+	</select>	
+	<select id="selectNoticeListTotCnt" parameterType="egovframework.notice.service.NoticeVO" resultType="int">
+			SELECT COUNT(*) totcnt
+			FROM notice
+			WHERE 1=1
+			<if test="searchKeyword != null and searchKeyword != ''">
+				<if test="searchCondition == 0">AND
+					name = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1">AND
+					number LIKE CONCAT('%',#{searchKeyword},'%')
+				</if>
+			</if>			
+	</select>
+
+</mapper>
